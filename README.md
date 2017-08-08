@@ -13,9 +13,9 @@ Kurzer Abriss der Features:
 Der schnelle Weg zum Erfolg:
 ----------------------------
 Dieses Projekt wurde mit der IDE Atom/PlatformIO erstellt.
-Die Firmware befindet sich im Verzeichniss "wlansensor/.pioenvs/esp12e/firmware.bin".
+Die Firmware befindet sich im Verzeichniss "wlansensor/firmware.bin".
 Die erste Firmware muß mit einem Flash-Tool (z. B. esptool.py) geflasht werde.
-Befehl: "esptool.py --port /dev/ttyUSB0 write_flash --flash_mode qio --flash_size 32m 0x00000 /home/???/wlanSensor/.pioenvs/esp12e/firmware.bin".
+Befehl: "esptool.py --port /dev/ttyUSB0 write_flash --flash_mode qio --flash_size 32m 0x00000 /home/???/wlanSensor/firmware.bin".
 Alle weiteren Firmware-Updates oder Spiffs-Dateien(html und andere Steuerdateien) können über WLan und Browser eingespielt werden.
 Nach dem initialen Firmware flashen müssen noch die Spiffs-Dateien für den Webserver eingespielt werden.
 Wenn eine ntp.txt-Datei mit gültiger IP-Adresse existiert, wird die Zeit lokal von dieser Adresse (z.B. die Routeradresse) abgeholt.

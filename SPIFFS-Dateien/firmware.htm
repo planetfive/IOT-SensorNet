@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>ESP-Firmware</title>
+		<style type="text/css"> 
+			div.rahmen { width:700px; margin:10px auto; padding:10px; border:1px solid #000; } 
+			div.version { width:700px; font-size:0.7em; }
+		</style>
+	</head>
+
+	<body>
+		<div class="rahmen">
+			<h2>Modul ESP 8266 - 12F</h2>
+			<p>Hier kann die Firmware über W-LAN aufgespielt werden. Die Firmware darf nicht größer als 500KB sein. 
+			Insgesammt stehen 1024 KB für Firmware zur Verfügung. Bei'm Flashen über W-LAN wird 1 Hälfte zum Speichern 
+			der neuen Firmware gebraucht. Nach dem Booten wird dann auf die neue Firmware umgeschaltet.
+			</p>
+			<h3>Firmware-Update</h3>
+			<p>Stell sicher, dass du die richtige Datei hast. Falls was schiefgeht, kann nur noch über die serielle 
+            Schnittstelle ein Firmwareupdate durchgeführt werden.<br>
+            Also bitte Birne benutzen.
+         </p>
+			<form method='POST' action='/upgrade' enctype='multipart/form-data'>
+
+				<p>
+				-----------------------------------------------------------------------------------------------
+				<h5>Achtung!!! Achtung!!! Achtung!!! Achtung!!! Achtung!!! Achtung!!! </h5>
+				<label> <input type="checkbox" name="erase_config" value="erase"> Loescht komplette Konfiguration </label>
+            <p>Diese Option erfordert eine erneute Inbetriebnahme des Moduls (AccessPoint)</p>
+				-----------------------------------------------------------------------------------------------
+         	</p>
+
+				<p><input type='file' name='upgrade' accept='.bin'><input type='submit' value='Firmware-Upgrade'></p>
+			</form>
+			<p><input type='button' onclick="location.href='/';" value="zur&uuml;ck" /></p>
+			<div class='version'>V W_02</div>
+					
+		</div>
+	</body>
+</html>

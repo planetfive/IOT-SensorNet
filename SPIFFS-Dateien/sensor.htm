@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>ESP-GPIO</title>
+		<style type="text/css"> 
+			div.rahmen { width:1100px; margin:10px auto; padding:10px; border:2px solid #000; } 
+
+			div  { font-size: 1.2em; }
+
+			a  { font-size: 1.2em; }
+
+		   p { font-size: 1.2em; margin-bottom:40px; margin-top:40px; }
+
+		   input.button { font-size:1.8em; }
+
+			div.error { background-color: red; }
+
+		   div.ok { background-color: green; }
+
+			td { padding:10px; }
+
+		</style>
+	</head>
+
+	<body>
+		<div class="rahmen">
+			<h2>Modul ESP 8266 - 12F</h2>
+			<h3>Tabelle Sensorwerte</h3>
+			<form action='sensor.htm' method='post'>
+			<table border="1" style="border-collapse:collapse">
+			<tr>
+				<th>UTC-Zeit</th>
+				<th>Modulname</th>
+				<th>IP-Adresse</th>
+				<th>Temperatur</th>
+				<th>Spannung</th>
+				<th>GPIO12</th>
+				<th>Lifetime</th>
+			</tr>
+			$Sensor
+			</table>
+			</form>
+         <p>Falls auf den Modulname-Button gedrückt wird, wird das entsprechende Modul in den Webserver-Modus versetzt.</p>
+			<p><input type='button' onclick="location.href='/';" value="zur&uuml;ck" /></p>
+			<div class='version'>V W_02</div>
+		</div>
+	</body>
+</html>

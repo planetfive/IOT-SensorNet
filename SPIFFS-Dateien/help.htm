@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>ESP-Help</title>
+		<style type="text/css"> 
+			div.rahmen { width:700px; margin:10px auto; padding:10px; border:1px solid #000; } 
+		</style>
+	</head>
+
+	<body>
+		<div class="rahmen">
+			<h2>Modul ESP 8266 - 12F</h2>
+			<h3>Hilfe für den Umgang und die Konfiguration des Moduls</h3>
+         <img src="/test.png" alt="Testbild">
+			<p>
+				<ul>
+					<li><h5>Allgemeines</h5>
+						Die hier verwendeten Software kann je nach Konfiguration als Temperatursensor, Schalter oder Zustandsdetektor 
+                  konfiguriert werden. Zusätzlich kann ein Webserver die Sensordaten anderer Module entgegennehmen und aufbereitet 
+                  anzeigen.<br>
+						Die Software wird vorkonfiguriert ausgeliefert, kann aber auch nach eigenem Ermessen verändert werden. Das gilt 
+						für die anzuzeigenden Webseiten, als auch für die Software selbst.
+						Beim ersten Start versucht das Modul, sich in dem konfigurierten Wlan-Netz einzubuchen. Während dieser Zeit 
+						blinkt das Modul. Nach 25 Versuchen wird abgebrochen und es konfiguriert sich als AccessPoint mit der 
+                  Zugangsadresse "192.168.4.1". In diesem Modus leuchtet die Modul-LED ständig. Der Link "Parameter" führt zur 
+                  Konfiguration des Moduls. 
+						Hier bitte die SSID und das Passwort des eigenen Heimnetzes eingeben. Beim nächsten Start sollte sich dann das 
+						Modul automatisch einbuchen. Die zugewiesene IP-Adresse des Moduls kann man im Router des Heimnetzes erfahren. 
+						Linux-User können als root auch "nmap -sP 192.168.X.0/24" eingeben. (X durch Heimnetz-Adresse ersetzen)<br>
+						Alternativ kann das Modul auch über die serielle Schnittstelle (BAUD 115200 8N1) konfiguriert werden. Hier 
+						werden auch Debug-Ausgaben angezeigt. Unter Linux kann dafür "minicom" verwendet werden.
+					</li>
+					<li><h5>Die verschiedenen Modi des Moduls.</h5>
+						"A" - AccessPoint-Modus. In diesem Modus arbeitet das Modul als AccessPoint. Es ist über die Adresse 192.168.4.1 erreichbar. Dabei 
+						muß der Computer/Tablet/Handy sich in das Modul-Wlan einbuchen. Hier wird die Grundkonfiguration vorgenommen. 
+                  ( SSID und Passwort Heim-WLAN ). Dieser Modus wird immer eingestellt,wenn sich das Modul nicht in's Heim-Wlan 
+                  einbuchen kann.<br><br>
+						"W" - Webserver-Modus. In diesem Modus ist das Modul ubers Heim-Netz zu erreichen. Dabei bucht es sich mit den konfigurierten 
+                  Parametern in's Heim-Wlan ein. Hier werden in der Regel dann alle weiteren Konfigurationen und Einstellungen 
+                  vorgenommen. Des weiteren kann hier auch neue Firmware geflashed werden.<br><br>
+						"W+" - Wie W, im Webservermodus. Zusätzlich wird ein UDP-Port auf eingehende Verbindungen überwacht. Der Port 
+                  muß in der Regel nicht verändert werden und kann bei 15000 belassen werden. Auf der Seite "sensor.htm" werden 
+                  die empfangenen Daten angezeigt. Wenn bei Remote-Ip die eigene Modul-IP-Adresse angegeben wird, werden auf dieser 
+                  Seite auch die eigenen Modul-Sensordaten angezeigt.<br><br>
+                  "M" - MixedMode. Das Modul bucht sich wie im "W"-Modus ins Heim-Wlan ein. Zusätzlich baut es aber noch einen 
+                  AccessPoint mit dem IP-Bereich 192.168.4.X auf. In diesen können sich Sensor-Module einbuchen und bilden so 
+                  einen eigenen abgeschirmten IP-Bereich.<br/><br/>
+						"S" - Hierbei handelt es sich um einen reinen Sensormodus. Das Modul erwacht in bestimmten einstellbaren Abständen, 
+						liest z.B. die Temperatur, setzt ein Datagramm ab und legt sich dann wieder schlafen. In diesem Modus ist auch 
+						Batteriebetrieb sinnvoll.
+					</li>
+					<li><h5>Dateisystem und Substitution.</h5>
+						Folgende Dateien werden im SPIFFS-Dateisystem verwendet:<br>
+						"startPage.htm", "parameter.htm", "hilfe.htm", "firmware.htm", "gpio.htm" und sensor.htm<br><br>
+						Folgende Substitutionsschlüsselworte sind verfügbar:<br>
+						"$Info" - Liefert allgemeine Angaben des Moduls. Z.B. Speichergrößen, SDK-Version, Heapgröße.<br>
+						"$NetInfo - Liefert die Parameter des Moduls. Z.B. Modulname, WLAN-SSID, WLAN-Passwort, WLAN-Kanal ....<br>
+						Verwendet werden diese Schlüsselworte in "startPage.htm".<br><br>
+						$Parameter - Enthält den Status des Aktualisierens.<br>
+						$Name, $Ssid, $Passphrase, $Mode, $Rip, $Rp, $Dsleep - Modulparameter<br>
+						Verwendet werden diese Parameter in "parameter.htm".<br><br>
+						$Temperatur und Vcc werden in "gpio.htm" verwendet.<br><br>
+						$Sensor wird in "sensor.htm" verwendet. !!! noch zu vervollständigen !!!!
+					</li>
+					<li><h5>Konfiguration von Temperatur-Aliasen.</h5>
+                  Die Temperatursensoren werden auf der Seite gpio.htm angezeigt. Die DS1820-Sensoren z.B. melden sich da 
+                  zur Identifikation mit ihrem Rom-Code. Um das ganze etwas lesbarer zu machen, kann für den Rom-Code im entsprechenden 
+                  Konfigurationsfeld ein frei zu vergebender Alias-Name angegeben werden. In der sensor.htm werden sie dann mit diesem 
+                  Namen angezeigt. Bsp: 282b336007000070:Modulsensor --&gt; Der DS1820 mit dem Romcode links vom Doppelpunkt wird mit 
+                  dem Namen Modulsensor in der sensor.htm-Seite angezeigt.
+               </li>
+               <li><h5>Bedingung und Aktion.</h5>
+                  Im Konfigurationsfeld Bedingung kann eine Bedingung angegeben werden, die dann die angegebene Aktion im Aktionsfeld 
+                  beim Zutreffen der Bedingung ausführt. <br/>
+                  Die Bedingung kann festgelegte Variablennamen und Zahlen sowie die Operatoren == für ist gleich, &lt; kleiner und &gt; 
+                  größer, sowie + und - enthalten. Gültige Variablennamen sind derzeit: <br/>
+                  $in - Input-GPIO<br/>
+                  $vcc - Modul-Betriebsspannung<br/>
+                  $dht_t - DHT22-Temperatur<br/>
+                  $dht_f - DHT22-Feuchte<br/>
+                  $romcode - DS1820 Romcode<br/>
+                  Folgende Aktionen sind derzeit verfügbar:<br/>
+                  "actionPushService", "out1", "out2"<br/>
+                  Wobei out2 bei einer Endbedingung zwischen 1 - 99 PWM-Pegel ausgibt.<br/>
+                  Die Bedingung ist in umgekehrter Polnischer Notation anzugeben. (siehe Wikipedia)<br/>
+                  Bsp:<br/>
+                  "$vcc 30 &lt;" "actionPushService"<br/>
+                  - Wenn die Betriebsspannung (wird in 10tel Grad ausgegeben) 3V unterschreitet, wird eine Nachricht über 
+                  den PushService verschickt.<br/>
+                  "$282b336007000070 300 &gt;" "out1"<br/>
+                  - Wenn die Temperatur des DS1820 mit obigem Romcode 30°C überschreitet, wird der GPIO-OUT1 HIGH geschaltet, 
+                  ansonsten wird LOW geschaltet.
+					</li>				
+				</ul>
+			</p>
+			<p><a href="/">zurück</a></p>
+		</div>
+	</body>
+</html>
+

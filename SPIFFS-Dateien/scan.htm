@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>ESP-SCAN</title>
+		<style type="text/css"> 
+			div.rahmen { width:1100px; margin:10px auto; padding:10px; border:2px solid #000; } 
+
+			div  { font-size: 1.2em; }
+
+			a  { font-size: 1.2em; }
+
+		   p { font-size: 1.2em; margin-bottom:40px; margin-top:40px; }
+
+		   input.button { font-size:1.2em; }
+
+			div.error { background-color: red; }
+
+		   div.ok { background-color: green; }
+
+			td { padding:10px; }
+
+		</style>
+	</head>
+
+	<body>
+		<div class="rahmen">
+			<h2>Modul ESP 8266 - 12F</h2>
+			<h3>Wlan-Netzwerk scannen</h3>
+			<form action='scan.htm' method='post'>
+			<table border="1" style="border-collapse:collapse">
+			<tr>
+				<th>SSID</th>
+				<th>BSSID (hex)</th>
+				<th>RSSI (dBm)</th>
+				<th>Kanal</th>
+            <th>Wifi wechseln</th>
+			</tr>
+			$SCAN_RESULT
+			</table>
+         <p><label>Scan starten: </label><input type='submit' name='scan' value="Scannen" /></p>
+         <p>Nach dem Scannen sollte der vom System angeforderte Speicher wieder freigegeben werden</p>
+         <p><label>Speicher freigeben: </label><input type='submit' name='free' value="Freigeben" /></p>
+			</form>
+ 			<p><input type='button' onclick="location.href='/';" value="zur&uuml;ck" /></p>
+			<div class='version'>V R_01</div>
+		</div>
+	</body>
+</html>

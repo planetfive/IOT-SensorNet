@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>ESP-Start</title>
+      <style type="text/css">
+         div.rahmen { width:700px; margin:10px auto; padding:10px; border:1px solid #000; }
+         div.version { width:700px; font-size:0.7em; }
+      </style>
+         
+    	<style type="text/css">
+	      .button250 { width:250px; }
+      </style>
+ 
+      <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+       
+   </head>
+
+        <body>
+
+                <div class="rahmen">
+                        <h2 > Modul $MODULNAME</h2>
+                        <h3>Moduldaten</h3>
+                        <p>$Info</p>
+                        <h3>Netzwerkverbindung</h3>
+                        <p>$NetInfo</p>
+
+       <h3>Modul Betriebsarten</h3>
+
+                 <p><input class="button250" type='button' onclick="location.href='/gpio.htm';" value="Eing / Ausg / Temp anzeigen" />
+
+                 <p><input class="button250" type='button' onclick="location.href='/sensor.htm';" value="Externe Sensoren anzeigen" />
+
+                 <p><input  class="button250" type='button' onclick="location.href='/schalter.htm';" value="Schalten / Tasten / Dimmen" />
+
+                 <p><input class="button250" type='button' onclick="location.href='/help.htm';" value="Hilfe" />
+
+       <h3>Modul Parametrieren</h3>
+
+                 <p><input class="button250" type='button' onclick="location.href='/parameter.htm';" value="Modul Parameter &auml;ndern" />
+
+                 <p><input class="button250" type='button' onclick="location.href='/firmware.htm';" value="Firmware update per WLAN" />
+
+                 <p><input class="button250" type='button' onclick="location.href='/upload';" value="SPIFFS update per WLAN" />
+
+       <h3>Entwickler Befehle</h3
+
+                 <p><input class="button250" type='button' onclick="location.href='/err.htm';" value="Fehleranalyse" />
+
+       <h3>Aktionen</h3>
+                 <form method='POST' action='/' >
+                 <p><input class="button250" type='submit' name='reboot' value='Modul neu booten'></p>
+                 <p><input class="button250" type='submit' name='testbutton' value='Uhrzeit holen'></p>
+                 <p><input class="button250" type='submit' name='erasebutton' value='Werkseinstellungen setzen'></p>
+                 </form>
+                 <div class='version'>V W_04</div>
+       </div>
+   </body>
+</html>

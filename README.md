@@ -22,5 +22,6 @@ Nach dem initialen Firmware-flashen müssen noch die Spiffs-Dateien für den Web
 Wenn eine ntp.txt-Datei mit gültiger IP-Adresse existiert, wird die Zeit lokal von dieser Adresse (z.B. die Routeradresse) abgeholt.
 
 Eine ausführliche Dokumentation ist in Arbeit.
+Mail:post@jollina.de
 
 

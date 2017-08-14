@@ -1,4 +1,4 @@
-# IOT-SensorNet - universelle Firmware für den ESP8266 (vorzugsweise 12F)
+# IOT-SensorPlot - universelle Firmware für den ESP8266 (vorzugsweise 12F)
 
 Achtung: An der Software wird noch eifrig gebastelt.
 

@@ -46,6 +46,7 @@ PushClient pushClient2;
 PushClient pushClient3;
 PushClient pushClient4;
 
+
 uint8_t tempSensorModel = NO_SENSOR; // legt den Typ des Temperatursensors fest, entweder DHT22 oder DS1820 ist möglich
 uint8_t out1_mode = NO_OUTPUT;
 uint8_t out2_mode = NO_OUTPUT;
@@ -323,6 +324,7 @@ void doPushService(PushClient &client, const char *ss) {
             else
               //Serial.println("Sensor nicht gefunden");
               debug(String(F("PushService:keine gültige Message-Variable")));
+              // toDo:  hier könnte auch der Messagestring einfach so ohne Interpretation übernommen werden
           }
         }
       }
@@ -1043,7 +1045,7 @@ void setup() {
   debug(F("Webserver gestartet ..."));
   boolean udpFlag = false;
   if((strlen(parameter[ModulMode])==2) && (parameter[ModulMode][1]=='+')) { // Sensoranzeige aktiviert
-    debug(F("Externe Sensoranzeige aktiviert"));
+    debug(F("Sensoranzeige aktiviert"));
     ntpTime = getNtpTime();
     ntpStartTime = ntpTime;
     bootTime = ntpTime;
@@ -1054,7 +1056,7 @@ void setup() {
     if(t > 0) {
       udpFlag = true;
       sensorTicker.attach(t,setSensorFlag);
-      debug(F("Eigene Sensoranzeige aktiviert"));
+      debug(F("Eigene Sensordaten senden"));
     }
   }
   if(udpFlag == true) {

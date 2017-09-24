@@ -63,14 +63,19 @@
 // Spindel MPU6050-Aufrufe optimiert
 // #define VERSION "R 0.32"
 
-// Remote Server Nachricht zum Pulse schicken
+// Nachricht zum Schalten des Remote Servermoduls (pulse) schicken
 // #define VERSION "R 0.33"
 
 // wertet Datei /ntp.txt aus und versucht dann, von dort die Zeit zu bekommen
 // #define VERSION "R 0.34"
 
 // spindel-code extrahiert
-#define VERSION "R 0.35"
+// #define VERSION "R 0.35"
 
+// neueste Atom-Version-Test
+// #define VERSION "R 0.36"
+
+// optische Verschönerung einfügen von global.css
+#define VERSION "R 0.37"
 
 #endif

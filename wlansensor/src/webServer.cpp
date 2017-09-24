@@ -157,35 +157,63 @@ const String newFileUploadString(){
   return p;
 }
 
+const String newHtmlPage(String msg){
+  String p = F("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>ESP8266</title>"
+                 "<style type=\"text/css\"> div.rahmen { width: 700px;margin: 10px auto;padding: 10px;border: 1px solid #000; } </style>"
+                 "</head><body><div class=\"rahmen\"><h3>");
+  p = p + msg;
+  p = p + F("</h3><p><a href=\"/\">zurück</a></p></div></body></html>");
+  return p;
+}
+
 const String schalterDef(const char *_name, uint8_t zustand){
-  String p = F("<p><input class='button' type='submit' name='_name' value='Schalter'>_zustand</p>");
+  String p = F("<p><h3>Ausgang:$name</h3><input class='button' type='submit' name='$name' value='Schalter'>$zustand</p>");
   if(zustand)
-    p.replace("_zustand","<label> ist Ein</label>");
+    p.replace("$zustand","<label> ist Ein</label>");
   else
-    p.replace("_zustand","<lavel> ist Aus</label>");
-  p.replace("_name",_name);
+    p.replace("$zustand","<lavel> ist Aus</label>");
+  p.replace("$name",_name);
   return p;
 }
 
 const String tasterDef(const char *_name) {
-  String p = F("<p><input class='button' type='submit' name='_name' value='Taster'></p>");
-  p.replace("_name",_name);
+  String p = F("<p><h3>Ausgang:$name</h3><input class='button' type='submit' name='$name' value='Taster'></p>");
+  p.replace("$name",_name);
   return p;
 }
 
-const String dimmerDef(const char *_slider_name, const char *_button_name){
-  String p = F("<table>	<tr> <td>"
-					       "<script type='text/javascript'> new Slider('_slider_name', 800, 40, 0, 100, 0, 1, 5,"
-						     "\"document.getElementById('_slider_name_id').value=Slider.instanz['_slider_name'].wert;\");"
-					       "</script>	<td> <input name='_slider_name_wert' id='_slider_name_id' maxlength='4' size='5' "
-                 " onChange=\"Slider.instanz['_slider_name'].neuerWert(this.value);\">"
-					      "</td> </tr> </table>"
-			          "<p><input class='button' type='submit' name='_button_name' value='Dimmer'></p>"
-                );
-  p.replace("_slider_name",_slider_name);
-  p.replace("_button_name",_button_name);
+const String dimmerDef(char sliderNr, int8_t dimmwert){
+  char _dimmwert[20];
+  itoa(dimmwert,_dimmwert,10);
+  if(dimmwert < 0 || dimmwert > 100) {
+    _dimmwert[0] = '0';
+    _dimmwert[1] = 0;
+  }
+  char ueberschrift[] =  "<h3>Slider Ausgang X</h3>";
+  ueberschrift[19] = sliderNr;
+  Serial.println(String("Dimmwert:") + String(_dimmwert));
+  String html = F("<table>	<tr> <td>"
+			         "<script type='text/javascript'> new Slider('$slider_name', 800, 40, 0, 100, $eingabewert, 1, 5,"
+						     "\"document.getElementById('$eingabefeld_id').value=Slider.instanz['$slider_name'].wert;\");"
+					       "</script>	<td> <input name='$eingabefeld_name' id='$eingabefeld_id' value='$eingabewert'"
+                 "maxlength='4' size='5' onChange=\"Slider.instanz['_slider_name'].neuerWert(this.value);\">"
+					       "</td> </tr> </table>"
+			           "<p><input class='button' type='submit' name='$button_name' value='jetzt Dimmen'></p>" );
+  String p = String(ueberschrift) + html;
+  char slider[] = "sliderX";
+  slider[6]=sliderNr;
+  char sliderbutton[] = "sliderbuttonX";
+  sliderbutton[12]=sliderNr;
+  char eingabefeld[] = "eingabefeldX";
+  eingabefeld[11]=sliderNr;
+  p.replace("$slider_name",slider);
+  p.replace("$button_name",sliderbutton);
+  p.replace("$eingabefeld_id",String(eingabefeld)+String("_id"));
+  p.replace("$eingabefeld_name",eingabefeld);
+  p.replace("$eingabewert",_dimmwert);
   return p;
 }
+
 
 //format bytes
 String formatBytes(size_t bytes){
@@ -316,8 +344,12 @@ String getWebStartPage() {
      // Serial.println("open 'startPage.htm' failed, return uploadPage");
      return newFileUploadString();
   }
-  page.replace("$Info",getModulInfo());
-  page.replace("$NetInfo",getNetworkInfo());
+  String info;
+  info = String(F("Modul-Laufzeit: ")) + modulLaufzeit() + String(F("  (Tage:Std:Min)<br>")) +
+         String(F("Modul-Mode: ")) + String(parameter[ModulMode]) + String(F("<br>")) +
+         String(F("Letzter Boot: ")) + ESP.getResetReason() + String(F("<br>")) +
+         String(F("Version: ")) + version + String(F("<br>"));
+  page.replace("$Info",info);
   return page;
 }
 
@@ -336,7 +368,7 @@ String getParameterPage() {
   page.replace("$Passphrase","****");
   switch(parameter[ModulMode][0]){
     case 'L':
-      page.replace("$Mode",F("<option selected>L  - Loggermode</option>"
+      page.replace("$Mode",F("<option selected>L - Loggermode</option>"
                                 "<option>S  - Sensormode</option>"
                                 "<option>W  - Station-Mode</option>"
                                 "<option>W+ - Station-Mode + Sensoranzeige</option>"
@@ -504,6 +536,8 @@ String getErrPage() {
      // Serial.println("open 'help.htm' failed, return uploadPage");
      return newFileUploadString();
   }
+  page.replace("$Info",getModulInfo());
+  page.replace("$NetInfo",getNetworkInfo());
   page.replace("$Error",getErr());
   return page;
 }
@@ -569,17 +603,26 @@ String getGpioPage() {
      input += F("LOW</p>");
 
   String out1 = F("<p>Out1-Pin:");
-  if(digitalRead(OUT1_PIN))
-     out1 += F("HIGH</p>");
-  else
-     out1 += F("LOW</p>");
+  if(out1_mode == DIMMER) {
+    out1 += String(out1_wert) + String("</p>");
+  }
+  else {
+     if(digitalRead(OUT1_PIN))
+        out1 += F("HIGH</p>");
+     else
+        out1 += F("LOW</p>");
+  }
 
   String out2 = F("<p>Out2-Pin:");
-  if(digitalRead(OUT2_PIN))
-     out2 += F("HIGH</p>");
-  else
-     out2 += F("LOW</p>");
-
+  if(out2_mode == DIMMER) {
+    out2 += String(out2_wert) + String("</p>");
+  }
+  else {
+     if(digitalRead(OUT2_PIN))
+        out2 += F("HIGH</p>");
+     else
+        out2 += F("LOW</p>");
+  }
   page.replace("$Temperatur",String(F("<p>Der momentane Sensorwert beträgt:")) + t + String("</p>"));
   page.replace("$Vcc",s + input + out1 + out2);
   return page;
@@ -639,7 +682,7 @@ String getSensorPage() {
       if(idx++ != 1) // alle, außer Modulname
          daten += String(F("<td align='center'>")) + wert + String(F("</td>"));
       else { // Modulname
-          daten += String(F("<td align='center'><input class='button' type='submit' name='")) +
+          daten += String(F("<td align='center'><input class='sensor_button' type='submit' name='")) +
                 wert + String(F("' value='")) + wert + String(F("'></td>"));
       }
     }
@@ -674,7 +717,7 @@ String getSchalterPage() {
       page.replace("$OUT1",tasterDef("taster1"));
       break;
     case DIMMER:
-      page.replace("$OUT1",dimmerDef("dimmer1","button1"));
+      page.replace("$OUT1",dimmerDef('1',out1_wert));
       break;
     default:
       page.replace("$OUT1","");
@@ -688,13 +731,14 @@ String getSchalterPage() {
       page.replace("$OUT2",tasterDef("taster2"));
       break;
     case DIMMER:
-      page.replace("$OUT2",dimmerDef("dimmer2","button2"));
+      page.replace("$OUT2",dimmerDef('2',out2_wert));
       break;
     default:
       page.replace("$OUT2","");
     }
   return page;
 }
+
 
 void webRoot(){
   Serial.print(F("\r\nRootPage - "));
@@ -724,7 +768,7 @@ void webRoot(){
              Serial.println(F("got Ntp-Time"));
           else
              Serial.println(F("no Ntp-Time"));
-
+          return;
 
 
           /*
@@ -746,9 +790,19 @@ void webRoot(){
           */
        }
        if(server.arg("erasebutton").length() > 0) {
-
-         Serial.println(F("Erase Config"));
-         ESP.eraseConfig();
+         // toDo --> die Parameterdaten löschen oder doch besser ab 1MB aufwärts??????????
+         debug(F("Erasebutton aufgerufen"));
+         server.send(200, F("text/html"),getWebStartPage());
+         return;
+         /*
+         Serial.println(F("Loesche alles ab erstem MB (nach Programmspeicher)"));
+         uint32_t start = 1048576; // ab 1MB löschen
+         for (int i=0; i < 768;i++) { // LOESCHT EEprom,SPIFFS-Filesystem und SDK-Parameter
+           spi_flash_erase_sector( (start / 4096)+i );
+           if (0 ==(i % 16))
+             Serial.print(".");
+           }
+         */
          /*
          uint32_t start = 4194304 - 16384; // ab 4MB -16K <-- SDK-Konfiguration
          for (int i=0; i < 4;i++) { // 4 Blobs a 4KB
@@ -768,17 +822,17 @@ void webRoot(){
            }
          }
          */
-         Serial.println(F("\r\nSDK-Erase durchgeführt, bitte warten Restart wird durchgeführt!\r\n"));
-         server.send(200, F("text/html"), F("Reboot wird durchgefuehrt .... Den Zurueck-Button des Browsers benutzen"));
+         /*
+         Serial.println(F("\r\nLöschung durchgeführt, bitte warten ... Restart wird durchgeführt!\r\n"));
+         server.send(200, F("text/html"), F("Gelöscht! Bitte warten ... Reboot wird durchgefuehrt .... Den Zurueck-Button des Browsers benutzen"));
          delay(1000);
          WiFi.disconnect();
          delay(1000);
          ESP.restart();
          delay(5000);
          // Ausführung stoppt hier
+         */
        }
-       server.send(200, F("text/html"),getWebStartPage());
-       break;
     default:
       server.send(200, F("text/html"),getWebStartPage());
       Serial.println(String(F("ServerMethode:")) + String(server.method()));
@@ -927,10 +981,11 @@ void schalterPage() {
         out1_wert = 3;
       }
       else {
-        if(server.arg("dimmer1_wert").length() > 0) {
+        if(server.arg("sliderbutton1").length() > 0) {
           Serial.println(F("Dimmen"));
-          String wert = server.arg("dimmer1_wert");
+          String wert = server.arg("eingabefeld1");
           w = wert.toInt();
+          Serial.println("Eingabefeldwert:"+String(w));
           out1_wert = w;
           analogWrite(OUT1_PIN,w);
         }
@@ -956,9 +1011,9 @@ void schalterPage() {
         out2_wert = 3;
       }
       else {
-        if(server.arg("dimmer2_wert").length() > 0) {
+        if(server.arg("sliderbutton2").length() > 0) {
           Serial.println(F("Dimmen"));
-          String wert = server.arg("dimmer2_wert");
+          String wert = server.arg("eingabefeld2");
           w = wert.toInt();
           out2_wert = w;
           analogWrite(OUT2_PIN,w);
@@ -1052,7 +1107,7 @@ void parameterPage() {
     if(_mode[1] == '+') {
       m = new char[3];
       m[0] = _mode[0];
-      m[1] = _mode[1];
+      m[1] = '+';
       m[2] = 0;
     }
     else {
@@ -1061,6 +1116,8 @@ void parameterPage() {
       m[1] = 0;
     }
     parameter[ModulMode] = m;
+    Serial.println(_mode);
+    //Serial.print("ModulMode:");Serial.println(m);
     //parameter[ModulMode] = toCharArr(_mode);
     parameter[RemoteIP] = toCharArr(_rip);
     parameter[RemotePort] = toCharArr(_rp);
@@ -1086,12 +1143,12 @@ void parameterPage() {
     parameter[OUT1_MODE] = toCharArr(_out1_mode);
     parameter[OUT2_MODE] = toCharArr(_out2_mode);
     writeModulParameter();
-    p = getParameterPage();
-    p.replace("$Parameter",F("Parameter aktualisiert! - Restarte Modul - dauert ca. 30 Sekunden, bis Modul bereit."));
+    p = newHtmlPage(F("Parameter aktualisiert! - Restarte Modul - dauert ca. 30 Sekunden, bis Modul bereit."));
+    //p.replace("$Parameter",F("Parameter aktualisiert! - Restarte Modul - dauert ca. 30 Sekunden, bis Modul bereit."));
     server.send(200, F("text/html"), p);
-    delay(1000);
+    delay(2000);
     WiFi.disconnect();
-    delay(1000);
+    delay(2000);
     ESP.restart();
     delay(5000);
   }
@@ -1130,6 +1187,7 @@ void handleSpiffsFileUpload(){
 
 const __FlashStringHelper * getSupportedFileType(String filename){
   if(filename.endsWith(".css")) return F("text/css");
+  else if(filename.endsWith(".js")) return F("application/javascript");
   else if(filename.endsWith(".htm")) return F("text/html");
   else if(filename.endsWith(".html")) return F("text/html");
   else if(filename.endsWith(".png")) return F("image/png");
@@ -1326,6 +1384,7 @@ void loggerPage() {
 }
 
 void setupWebServer(){
+
   server.on("/logger.htm",loggerPage);
 
   server.on("/test.htm",testPage);

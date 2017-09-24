@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>ESP-Help</title>
+      <link rel="stylesheet" type="text/css" href="/global.css">
+      <style type="text/css"> div.rahmen { width:1100px; } </style>         
+   </head>
+
+   <body>
+      <div class="rahmen">
+         <h2>Modul ESP 8266 - 12F</h2>
+         <h3>Beschreibung der programierbaren Aktionen des Moduls</h3>
+         
+			<p>
+				<ul>
+					<li><h5>Allgemeines</h5>
+						Das Modul ist programmierbar. Es kann Aktionen auslösen, die über Bedingungen gesteuert werden.<br>
+						Beispielsweise kann abhängig von einem Sensorwert eine Pushnachricht versandt werden oder ein 
+						Ausgang geschaltet werden. Die Bedingungen werden in "umgekehrter polnischer Notation" formuliert. 
+						("wikipedia umgekehrte polnische Notation" googeln) Zum Verständniss werden unten ein paar Beispiele 
+						zum besseren Verständniss gelistet.
+					</li>
+					<li><h5>Beschreibung der Variablen</h5>
+						Um auf Sensorwerte zugreifen zu können, existieren spezielle Variablennamen, die von der Software 
+						mit den aktuellen Sensorwerten gefüllt werden.<br>
+
+						<ol><li>$in --> liest den Input-Pin. Der Wert kann 0 oder 1 sein.</li>
+						    <li>$VCC --> Wert der momentanen Betriebsspannung in hundertstel. Bsp: 1,346 Volt ergibt 134.</li>
+						    <li>$dht_t --> Temperatur des DHT-Sensors in zehntel. Bsp: 25,6 Grad C ergibt 256.</li>
+						    <li>$dht_f --> Feuchtewert des DHT-Sensors in zehntel. Bsp: 85,4 % rel.Feuchte ergibt 854.</li>
+						    <li>$time  --> Sekunden des angefangenen Tages.</li>
+						    <li>$lifetime --> irgendein Sensor hat die Lebenszeit(Sleeptime*2 + 10%sleeptime)) überschritten.</li>
+						    <li>$romcode --> Temperatur dieses DS1820-Sensors in zehntel. Bsp: 21,88 Grad C ergibt 218.</li>
+						</ol>
+					</li>
+					<li><h5>Gültige Operatoren.</h5>
+						<ol><li>+ --> addieren</li>
+						    <li>- --> subtrahieren</li>
+						    <li>&gt; oder &lt; --> größer bzw. kleiner als</li>
+						    <li>== --> gleich</li>
+						    <li>!= --> ungleich</li>
+						    <li>&& --> logisch und</li>
+						    <li>|| --> logisch oder</li>
+						    <li>! --> nicht</li>
+						</ol>
+					</li>
+					<li><h5>Definierte Aktionen.</h5>
+						Nachdem im Bedingungsfeld die Bedingung festgelegt wurde, muß hier die Aktion angegeben werden, die 
+						von der Software bei Zutreffen ausgeführt wird.<br>
+						<ol><li>PushService1 bis PushService4 ( siehe weiter unten )</li>
+						    <li>pulseOut1 oder pulseOut2 --> Schaltet Ausgang 1 oder 2 im Sekundentakt um. Geschalt wird ein 
+							entferntes Modul, dessen Remote-IP-Adresse und Remote-Port in den Parametern angegeben ist</li>
+						    <li>out1H,out1L,out2H,out2L --> der entsprechende Ausgang des Moduls wird entweder High oder Low geschaltet</li>
+						    <li>out1,out2 --> der entsprechende Ausgang des Moduls wird bei Bedingung "wahr" auf High geschaltet, ansonsten auf Low 
+							Bsp:[1 2 >] [out1] --> Die Bedingung 1 ist größer als 2 ist unwahr, deshalb wird out1 Low</li>
+						</ol>
+					</li>
+					<li><h5>Beschreibung PushService.</h5>
+						Momentan ist der Versand von Pushnachrichten mit dem Pushservice "https://www.pushingbox.com" möglich. Durch eine 
+						Registrierung und Einrichtung von Services/Szenarien ( Genaueres ist auf der Website beschrieben ) kann man die 
+						erhaltenen DeviceID's in das Id-Feld in den Parametereinstellungen des Moduls eingeben. In den Bedingungs/Aktionsfeldern 
+						wird auf die Id's mit dem Schlüsselwort "PushService1 .. 4 darauf Bezug genommen.<br>
+						Es können folgende Variablen an den Pushservice übergeben werden:
+						<ol><li>Vcc --> übergibt momentane Modulspannung</li>
+						    <li>Lifetime --> gibt Warnung aus, dass ein Sensor seine Daten nicht in der erwarteten Zeit übermittelt hat</li>
+						    <li>Dht --> übergibt momentanen Feuchte -und Temperaturwert</li>
+						    <li>Romcode des DS1820-Temperatursensors --> übergibt den Temperaturwert des entsprechenden Sensors</li>
+						    <li>Spindel --> XXXXX</li>
+						</ol>
+						Schlüsselwort PushService1..4 und Variable werden durch Doppelpunkt getrennt.
+					</li>
+					<li><h5>Beispiele</h5>
+						<table>
+						<tr><th>Bedingungsfeld</th><th>Aktionsfeld</th><th>Beschreibung</th></tr> 
+						<tr> <td>$dht_f 750 &gt;</td><td>out1</td><td>Ausgang 1 wird bei einer Feuchte größer als 75% rel.Feuchte High 
+                                                         ansonsten Low
+						    </td></tr>
+						<tr> <td>$lifetime</td><td>PushService1</td><td>PushService1 wird ausgeführt</td></tr>
+						<tr> <td>$VCC 299 &lt;</td><td>PushService1:Vcc</td><td>Wenn VCC kleiner als 2,99 Volt ist, dann wird PushService1 
+							ausgeführt und Vcc(Modulspannung) übergeben</td></tr>
+						</table>
+					</li>	
+				</ul>
+			</p>
+			<p><input class="back_button" type='button' onclick="location.href='/';" value="zurück" /></p>
+
+      <div class='version'>Version R2</div>
+		</div>
+	</body>
+</html>
+

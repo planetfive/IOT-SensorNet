@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+   <head>
+   <meta charset="utf-8">
+   <title>ESP-HH10D-Modul</title>
+   <link rel="stylesheet" type="text/css" href="/global.css">
+   <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+   </head>
+
+   <body>
+   <div class="rahmen">
+      <h2>Modul $MODULNAME</h2>
+      <h3>Einstellungen HH10D-Modul</h3>
+      <form action='hh10d.htm' method='post'>
+         <p><label>Kalibrierwerte ermitteln</label><input class="link_button" type='submit' name='calibrate' value='Jetzt kalibrieren'></p>
+         $Kalibriermeldung
+         <p><label>Feuchte anzeigen</label><input class="link_button" type='submit' name='humidity' value='Relative Feuchte anzeigen'></p>
+         $Feuchtewert
+      </form>
+      <p><input class="back_button" type='button' onclick="location.href='/';" value="zurück" /></p>
+      <div class='version'>V R 3</div>
+   </div>
+   </body>
+</html>

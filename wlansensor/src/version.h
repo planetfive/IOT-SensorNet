@@ -75,7 +75,13 @@
 // neueste Atom-Version-Test
 // #define VERSION "R 0.36"
 
-// optische Verschönerung einfügen von global.css
-#define VERSION "R 0.37"
+// optische Verschönerung und Einfügen von global.css
+// #define VERSION "R 0.37"
+
+// Löschen von SPIFFS-Dateien auf files.htm
+// #define VERSION "R 0.38"
+
+// hinzufügen von Feuchtesensor HH10D, verschiedene programmtechnische Verbesserungen
+#define VERSION "R 0.39"
 
 #endif

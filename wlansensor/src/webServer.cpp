@@ -22,6 +22,8 @@
 #include "parser.h"
 #include "Esp.h"
 #include "logger.h"
+#include "hh10d.h"
+#include "options.h"
 
 extern "C" {
 #include "user_interface.h"
@@ -366,6 +368,8 @@ String getParameterPage() {
   page.replace("$Gateway",String(parameter[Gateway]));
   page.replace("$Bssid",String(parameter[Bssid]));
   page.replace("$Passphrase","****");
+  page.replace("$Mode",getModulMode(parameter[ModulMode]));
+  /*
   switch(parameter[ModulMode][0]){
     case 'L':
       page.replace("$Mode",F("<option selected>L - Loggermode</option>"
@@ -466,13 +470,15 @@ String getParameterPage() {
                                 "<option>M+ - AccessPoint + Station-Mode + Sensoranzeige</option>"
                                 ));
   }
+  */
   page.replace("$Rip",String(parameter[RemoteIP]));
   page.replace("$Rp",String(parameter[RemotePort]));
   page.replace("$Dsleep",String(parameter[DeepSleep]));
   page.replace("$VCC_Offset",String(parameter[VCC_Offset]));
   page.replace("$Alias",String(parameter[TempAlias]));
   String tModel = String(parameter[TempSensor]);
-  Serial.println(String(F("Temperatursensor-Model:")) + tModel);
+  page.replace(F("$tModel"),getSensorOptions(tModel));
+  /*
   if(tModel.equals("DS1820"))
     page.replace("$tModel",F("<option>NO</option><option selected>DS1820</option><option>DHT22</option><option>Spindel</option>"));
   else
@@ -483,6 +489,7 @@ String getParameterPage() {
         page.replace("$tModel",F("<option>NO</option><option>DS1820</option><option>DHT22</option><option selected>Spindel</option>"));
       else
         page.replace("$tModel",F("<option selected>NO</option><option>DS1820</option><option>DHT22</option><option>Spindel</option>"));
+  */
   page.replace("$Ap_pw",String(parameter[APpassphrase]));
   page.replace("$Ap_ip",String(parameter[APip]));
   //page.replace("$Ap_gw",String(parameter[APgateway]));
@@ -501,6 +508,9 @@ String getParameterPage() {
   //String out1_mode = String(parameter[OUT1_MODE]);
   //Serial.println("Output1 - Mode:"+out1_mode);
   setOutputMode();
+  page.replace("$oMode1",getOutputMode(out1_mode));
+  page.replace("$oMode2",getOutputMode(out2_mode));
+  /*
   switch(out1_mode){
     case SCHALTER:
       page.replace("$oMode1",F("<option>NO_OUTPUT</option><option selected>SCHALTER</option><option>TASTER</option><option>DIMMER</option>"));
@@ -527,6 +537,7 @@ String getParameterPage() {
     default:
       page.replace("$oMode2",F("<option selected>NO_OUTPUT</option><option>SCHALTER</option><option>TASTER</option><option>DIMMER</option>"));
     }
+  */
   return page;
 }
 
@@ -586,6 +597,9 @@ String getGpioPage() {
          break;
       case DHT_SENSOR:
          t = do_dht();
+         break;
+      case HH10D_SENSOR:
+         t = do_hh10d();
          break;
 #ifdef SPINDELCODE
       case Spindel:
@@ -903,6 +917,67 @@ void sensorPage() {
   server.send(200, F("text/html"), getSensorPage());
 }
 
+String getHtmlTemplate(String file) {
+  String htmlTemplate = F("<form action='files.htm' method='post'>"
+                          "<p><input type='text' name='file_input' value='$filename' >"
+                          "<input type='submit' class='button' name='file_button' value='Löschen' /></p>"
+                          "</form>");
+  htmlTemplate.replace("$filename",file);
+  return htmlTemplate;
+}
+
+String getFilesPage() {
+  // Serial.print("Handle getSchalterPage(): ");
+  String page = getFileContents(F("/files.htm"));
+  if (page.length() == 0) {
+     return newFileUploadString();
+  }
+  // Dateiliste einlesen
+  Serial.println(F("SPIFFS-Dateien lesen"));
+  Dir dir = SPIFFS.openDir(F("/"));
+  String list;
+  while(dir.next()){
+    File file = dir.openFile("r");
+    // Serial.println(file);
+    list += getHtmlTemplate(file.name());
+    file.close();
+  }
+  page.replace("$Moduldateien", list);
+  return page;
+}
+
+void filesPage() {
+  if(server.method()==HTTP_POST) {
+    // HTTP_POST
+    String s = server.arg("file_input");
+    Serial.println(String(F("Delete File:")) + s);
+    deleteFile(s.c_str());
+  }
+  server.send(200, F("text/html"), getFilesPage());
+}
+
+void hh10dPage() {
+  String kalibriermeldung = "";
+  String feuchtewert = "";
+  String page = getFileContents(F("/hh10d.htm"));
+  if (page.length() == 0) {
+     page = newFileUploadString();
+  }
+  if(server.method()==HTTP_POST) {
+    // HTTP_POST
+    if(server.arg("calibrate").length() > 0) {
+      if(writeCalibratedValuesInFile())
+        kalibriermeldung = F("Kalibrierwerte ermittelt und in SPIFFS-File geschrieben");
+    }
+    else if(server.arg("humidity").length() > 0) {
+      feuchtewert = do_hh10d();
+    }
+  }
+  page.replace(F("$Kalibriermeldung"),kalibriermeldung);
+  page.replace(F("$Feuchtewert"),feuchtewert);
+  server.send(200, F("text/html"), page);
+}
+
 void scanPage() {
   String page = getScanPage();
   if(server.method()==HTTP_GET) {
@@ -1116,7 +1191,6 @@ void parameterPage() {
       m[1] = 0;
     }
     parameter[ModulMode] = m;
-    Serial.println(_mode);
     //Serial.print("ModulMode:");Serial.println(m);
     //parameter[ModulMode] = toCharArr(_mode);
     parameter[RemoteIP] = toCharArr(_rip);
@@ -1125,6 +1199,7 @@ void parameterPage() {
     parameter[VCC_Offset] = toCharArr(_vcc_offset);
     parameter[TempAlias] = toCharArr(_alias);
     parameter[TempSensor] = toCharArr(_model);
+    //Serial.print("Speichere:");Serial.println(_model);
     parameter[APpassphrase] = toCharArr(_ap_pw);
     parameter[APip] = toCharArr(_ap_ip);
     //parameter[APgateway] = toCharArr(_ap_gw);
@@ -1418,6 +1493,10 @@ void setupWebServer(){
   server.on("/sensor.htm",sensorPage);
 
   server.on("/scan.htm",scanPage);
+
+  server.on("/files.htm",filesPage);
+
+  server.on("/hh10d.htm",hh10dPage);
 
   server.onNotFound([](){
     /*

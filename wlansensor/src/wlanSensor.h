@@ -51,7 +51,7 @@ extern float dhtTemp,dhtHum;
 //extern int seconds;
 extern unsigned long ntpTime,ntpStartTime,verglTime,bootTime;
 
-enum TEMP_SENSOR_MODEL { NO_SENSOR, DS1820, DHT_SENSOR, Spindel };
+enum TEMP_SENSOR_MODEL { NO_SENSOR, DS1820, DHT_SENSOR, HH10D_SENSOR, Spindel };
 extern uint8_t tempSensorModel;
 
 enum OUTPUT_MODE { NO_OUTPUT, SCHALTER, TASTER, DIMMER };

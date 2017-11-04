@@ -21,6 +21,7 @@
 #include "parser.h"
 #include "logger.h"
 
+#include "hh10d.h"
 
 
 extern "C" {
@@ -252,6 +253,9 @@ String getSensorDaten() { // ermittelt die Sensordaten des Moduls
           delay(10);
          sensorMessage = do_dht();
          break;
+      case HH10D_SENSOR:
+        sensorMessage = do_hh10d();
+        break;
 #ifdef SPINDELCODE
       case Spindel:
          sensorMessage = do_spindel();
@@ -1195,6 +1199,9 @@ void loop() {
       case DHT_SENSOR:
          sensorMessage = do_dht();
          break;
+      case HH10D_SENSOR:
+          sensorMessage = do_hh10d();
+          break;
 #ifdef SPINDELCODE
       case Spindel:
          sensorMessage = do_spindel();
@@ -1378,6 +1385,10 @@ void loop() {
                  Serial.println(do_spindel());
                  break;
 #endif
+        case 'h':do_hh10d();
+                  break;
+        case 'H':writeCalibratedValuesInFile();
+                  break;
         case 'd':if(tempSensorModel != DS1820)
                     break;
                  Serial.print(F("Temperatur:"));

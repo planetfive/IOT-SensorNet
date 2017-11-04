@@ -160,22 +160,28 @@ boolean readModulParameter() {
 extern DHT dht;
 void setTemperaturModel() {
   String tModel = String(parameter[TempSensor]);
-  if(tModel.equals("DS1820"))
+  if(tModel.equals("DS1820")) {
     tempSensorModel = DS1820;
-  else
-    if(tModel.equals("DHT22")) {
-      if(resetInfo.reason == 0) { // PowerON
-        while(millis() < 1050) // Spannung muß mindestens 1 Sek anliegen, bevor der DHT22 betriebsbereit ist
-          delay(10);
-      }
-      tempSensorModel = DHT_SENSOR;
-      dht.setup(DS_PIN,DHT::AUTO_DETECT); // AUTO_DETECT ruft readSensor() auf, das heisst, beim nächsten lesen nach 1 sec gibt's gültige werte
+    return;
+  }
+  if(tModel.equals("DHT22")) {
+    if(resetInfo.reason == 0) { // PowerON
+      while(millis() < 1050) // Spannung muß mindestens 1 Sek anliegen, bevor der DHT22 betriebsbereit ist
+        delay(10);
     }
-    else
-      if(tModel.equals("Spindel"))
-        tempSensorModel = Spindel;
-      else
-        tempSensorModel = NO_SENSOR;
+    tempSensorModel = DHT_SENSOR;
+    dht.setup(DS_PIN,DHT::AUTO_DETECT); // AUTO_DETECT ruft readSensor() auf, das heisst, beim nächsten lesen nach 1 sec gibt's gültige werte
+    return;
+  }
+  if(tModel.equals("Spindel")) {
+    tempSensorModel = Spindel;
+    return;
+  }
+  if(tModel.equals("HH10D")) {
+    tempSensorModel = HH10D_SENSOR;
+    return;
+  }
+  tempSensorModel = NO_SENSOR;
 }
 
 

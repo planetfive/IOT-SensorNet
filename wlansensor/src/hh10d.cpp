@@ -98,27 +98,29 @@ boolean getCalibratedValues(){
       return false;
     }
   sensitiv_value   =  i2cRead2bytes(81, 10); //Read sensitivity from EEPROM
-  s = String(F("Sensitive=")) + String(sensitiv_value) + "\r\n";
+  s = String(F("Sensitive=")) + String(sensitiv_value) + " \r\n";
   offset_value =  i2cRead2bytes(81, 12); //Same for offset
   s += String(F("Offset=")) + String(offset_value);
   Serial.println(s);
   return true;
 }
 
-boolean writeCalibratedValuesInFile() {
+String writeCalibratedValuesInFile() {
+  String values = F("Sensortyp muß in Parametern auf <HH10D> gesetzt werden ... breche ab");
   if(tempSensorModel != HH10D_SENSOR) {
-    Serial.println(F("Sensortyp muß in Parametern auf <HH10D> gesetzt werden ... breche ab"));
-    return false;
+    Serial.println(values);
+    return values;
   }
   if(getCalibratedValues()) {
-    String txt = String(sensitiv_value) + ',' + String(offset_value);
-    if(writeFile(getHh10dFilename().c_str(),txt.c_str()) == false) {
-      Serial.println(F("Konnte Kalibrierdatei nicht erstellen"));
-      return false;
+    values = String(sensitiv_value) + ',' + String(offset_value);
+    if(writeFile(getHh10dFilename().c_str(),values.c_str()) == false) {
+      values = (F("Konnte Kalibrierdatei nicht erstellen"));
+      Serial.println(values);
+      return values;
     }
-    return true;
+    return String(F("SensitiveWert=")) + String(sensitiv_value) + String(F(" OffsetWert=")) + String(offset_value);
   }
-  return false;
+  return String(F("I2C-Fehler aufgetreten"));
 }
 
 // ****************************************************************

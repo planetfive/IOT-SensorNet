@@ -4,6 +4,6 @@
 #include <Arduino.h>
 
 extern String do_hh10d();
-extern boolean writeCalibratedValuesInFile();
+extern String writeCalibratedValuesInFile();
 
 #endif

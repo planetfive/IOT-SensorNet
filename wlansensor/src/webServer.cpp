@@ -602,7 +602,7 @@ String getGpioPage() {
          t = do_hh10d();
          break;
 #ifdef SPINDELCODE
-      case Spindel:
+      case SPINDEL:
          t = do_spindel();
          break;
 #endif
@@ -772,6 +772,7 @@ void webRoot(){
           delay(1000);
           ESP.restart();
           delay(5000);
+          // rebootet !
        }
         if(server.arg("testbutton").length() > 0) {
 
@@ -782,6 +783,7 @@ void webRoot(){
              Serial.println(F("got Ntp-Time"));
           else
              Serial.println(F("no Ntp-Time"));
+          server.send(200, F("text/html"),getWebStartPage());
           return;
 
 
@@ -805,7 +807,7 @@ void webRoot(){
        }
        if(server.arg("erasebutton").length() > 0) {
          // toDo --> die Parameterdaten löschen oder doch besser ab 1MB aufwärts??????????
-         debug(F("Erasebutton aufgerufen"));
+         debug(F("Erasebutton aufgerufen zur Zeit ohne Funktion"));
          server.send(200, F("text/html"),getWebStartPage());
          return;
          /*
@@ -966,8 +968,7 @@ void hh10dPage() {
   if(server.method()==HTTP_POST) {
     // HTTP_POST
     if(server.arg("calibrate").length() > 0) {
-      if(writeCalibratedValuesInFile())
-        kalibriermeldung = F("Kalibrierwerte ermittelt und in SPIFFS-File geschrieben");
+      kalibriermeldung = writeCalibratedValuesInFile();
     }
     else if(server.arg("humidity").length() > 0) {
       feuchtewert = do_hh10d();
@@ -1014,7 +1015,7 @@ void scanPage() {
     for(uint8_t i=0; i < server.args(); i++) {
       if(server.argName(i).length() > 0) {
          Serial.println("Name:" + server.argName(i));
-         if(server.argName(i).startsWith("n_")) {
+         if(server.argName(i).startsWith("n_")) {  // toDo: muß überarbeitet werden, siehe unten
           String number = server.argName(i).substring(2);
           Serial.println("nummer:"+number);
           uint8_t idx = number.toInt();
@@ -1025,6 +1026,8 @@ void scanPage() {
           Serial.println("BSSID:" + bssid);
           parameter[Bssid] = toCharArr(bssid);
           writeModulParameter();
+          // toDo: nicht ausgereift, weil passwort nicht abgefragt wird und nicht neu gestartet !!!!!
+          // ausserdem sollte vorher überprüft werden, ob eine Einwahl mit den neuen Parametern möglich ist !!!!
          }
       }
     }
@@ -1537,7 +1540,7 @@ void setupWebServer(){
       Serial.println(String(F("File existiert auch nicht:")) + path);
       server.send(404, F("text/html"),"File not Found!");
     }
-    });
+  });
 
   server.on("/firmware.htm", HTTP_GET,firmwarePage);
 

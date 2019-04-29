@@ -3,6 +3,7 @@
 
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
+#include <time.h>
 
 enum Status { Idle, Success, Fail, Progress };
 
@@ -12,7 +13,7 @@ class PushClient {
   Status status = Idle;
   const char* _pushServerAddress = "api.pushingbox.com";
   const char *deviceId;
-  unsigned long startTime,lockTime,failTime;
+  time_t startTime,lockTime,failTime;
   int timeOut = 20; // Sekunden
   uint16_t _lock = 3600;
   String msg;

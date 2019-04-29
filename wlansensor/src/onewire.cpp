@@ -10,7 +10,7 @@
  * modified by R.Kreisel to use in Projekt
  *          https://github.com/planetfive/IOT-SensorNet
  */
- 
+
  /*
 Copyright (c) 2007, Jim Studt  (original old version - many contributors since)
 The latest version of this library may be found at:

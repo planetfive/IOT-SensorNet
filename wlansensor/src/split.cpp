@@ -58,12 +58,13 @@ String Split::getIndex(int idx) {
     if(pos++ == idx)
        return _part;
   }
+  return "";
 }
 
 
 void Split::setPart() {
   _end = _s.indexOf(_delimiter,_start);
-  
+
   if(_end == -1) {  // kein delimiter, letzter Teilstring
     _next = false;
     _part = _s.substring(_start);
@@ -88,4 +89,3 @@ void Split::setPart() {
   else
       _next = true;
 }
-

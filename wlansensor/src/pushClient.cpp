@@ -58,7 +58,7 @@ void PushClient::handle() {
   if(ntpTime < failTime)
     return;
   if(PushClient::status == Fail) {
-    PushClient::status == Idle;
+    PushClient::status = Idle;
     pushMessage();
     return;
   }

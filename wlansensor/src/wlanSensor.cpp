@@ -6,6 +6,7 @@
 #include <WiFiUdp.h>
 #include <ESP8266HTTPClient.h>
 #include <Ticker.h>
+#include <time.h>
 
 #include "DHT.h"
 #include "webServer.h"
@@ -21,6 +22,7 @@
 #include "parser.h"
 #include "logger.h"
 
+
 #include "hh10d.h"
 
 
@@ -32,7 +34,7 @@ extern "C" {
 #include "osapi.h"
 #include "os_type.h"
 
-void os_delay_us(int);
+//void os_delay_us(int);
 void wdt_feed();
 };
 
@@ -91,7 +93,8 @@ boolean sensorFlag;  // true, wenn das Modul als sensor arbeitet
 char packetBuffer[UDP_MAX_SIZE + 2]; //  UDP_TX_PACKET_MAX_SIZE buffer to hold incoming packet
 
 // Time-Gedöns
-unsigned long ntpTime,ntpStartTime,verglTime,bootTime;
+//unsigned long ntpTime,ntpStartTime,verglTime,bootTime;
+time_t ntpTime,ntpStartTime,verglTime,bootTime;
 
 // Die Klasse AliasParser ersetzt den Romcode der Temperatursensoren durch das festgelegte Alias
 AliasParser aliasParser;
@@ -418,6 +421,7 @@ void parseAction(const char *condition, const char *action, const char * ss = NU
         if(cond > 0){  // nur wenn cond > 0 wird high ausgegeben
           switch(out1_mode){
             case SCHALTER:
+              out1_wert = -1;
               digitalWrite(OUT1_PIN,1);
               break;
             case TASTER:
@@ -444,6 +448,7 @@ void parseAction(const char *condition, const char *action, const char * ss = NU
         if(cond > 0){  // nur wenn cond > 0 wird high ausgegeben
           switch(out2_mode){
             case SCHALTER:
+              out2_wert = -1;
               digitalWrite(OUT2_PIN,1);
               break;
             case TASTER:
@@ -518,11 +523,10 @@ void parseAction(const char *condition, const char *action, const char * ss = NU
         return;
       }
     }
-    /*
     else
-      debug(S(F("parseAction:Bedingung enthaelt Fehler!")));
+      debug(F("parseAction:Bedingung enthaelt Fehler!"));
        //Serial.println(F("Condition = Fehlerfall"));
-    */
+
 }
 
 // ************************************************
@@ -1031,7 +1035,7 @@ void setup() {
 
   // ab hier nur noch W,A,M - Modes
   if( (parameter[ModulMode][0]!='W')&&(parameter[ModulMode][0]!='A')&&(parameter[ModulMode][0]!='M'))
-     parameter[ModulMode][0]=='W';
+     parameter[ModulMode][0]='W';
 
   /*
   if(dns_server == true) {  // toDo dns_server nur im AP_Mode ? oder evtl. ganz entfernen ?
@@ -1233,9 +1237,7 @@ void loop() {
       char c;
       char* filename = NULL;
       char* url = NULL;
-      uint8_t pin;
       String s;
-      int v;
       double volt;
       c = Serial.read();
       switch(c){
@@ -1372,11 +1374,28 @@ void loop() {
                  //system_restart();
                  break;
         case 'R':Serial.println(F("\r\nGoing reset now"));
-                 delay(1000);
                  WiFi.disconnect();
+                 delay(1000);
                  ESP.reset();
                  delay(5000);
                  break;
+        case '5': Serial.println(F("\r\ndeep sleep - rf_enabled"));
+                  WiFi.disconnect();
+                  delay(1000);
+                  ESP.deepSleep(10,WAKE_RF_DEFAULT);
+                  delay(5000);
+                  //system_restart();
+                  break;
+        case '6': Serial.println(F("\r\ndeep sleep - rf_disabled"));
+                  WiFi.disconnect();
+                  delay(1000);
+                  ESP.deepSleep(10,WAKE_RF_DISABLED);
+                  delay(5000);
+                  //system_restart();
+                  break;
+        case '7': Serial.print(F("\r\nwifi status:"));
+                  Serial.println(wifi_station_get_connect_status());
+                  break;
         case 'n':Serial.println(String(F("Ntp-Time:")) + String(ntpTime));
                  break;
 #ifdef SPINDELCODE

@@ -174,7 +174,7 @@ void setTemperaturModel() {
     return;
   }
   if(tModel.equals("Spindel")) {
-    tempSensorModel = Spindel;
+    tempSensorModel = SPINDEL;
     return;
   }
   if(tModel.equals("HH10D")) {

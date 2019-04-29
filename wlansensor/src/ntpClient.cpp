@@ -21,7 +21,7 @@ byte pBuffer[ NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing packets
 WiFiUDP udpNtp;
 
 // send an NTP request to the time server at the given address
-unsigned long sendNTPpacket(IPAddress& address) {
+void sendNTPpacket(IPAddress& address) {
   // set all bytes in the buffer to 0
   memset(pBuffer, 0, NTP_PACKET_SIZE);
   // Initialize values needed to form NTP request

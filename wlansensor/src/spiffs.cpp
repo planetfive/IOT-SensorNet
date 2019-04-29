@@ -8,7 +8,6 @@
 
 String dirFiles() {
   String files = "";
-  int i;
   Dir dir = SPIFFS.openDir("/");
   while (dir.next()) {
     files +=dir.fileName();
@@ -71,6 +70,7 @@ void showFiles(){
 
 boolean uploadFile(char* url,char* file) {  // Upload von einer Webserver-URL
   HTTPClient http;
+  WiFiClient * stream = http.getStreamPtr();
 
   File f = SPIFFS.open(file, "w");
   if (!f) {
@@ -79,7 +79,7 @@ boolean uploadFile(char* url,char* file) {  // Upload von einer Webserver-URL
   }
 
    // configure server and url
-   http.begin(url);
+   http.begin(*stream,url);
    Serial.println(F("[HTTP] GET..."));
    // start connection and send HTTP header
    int httpCode = http.GET();
@@ -93,7 +93,7 @@ boolean uploadFile(char* url,char* file) {  // Upload von einer Webserver-URL
         // create buffer for read
         uint8_t buff[128] = { 0 };
         // get tcp stream
-        WiFiClient * stream = http.getStreamPtr();
+        // ***** Geändert weil http.begin(uri) is deprecated !!!! WiFiClient * stream = http.getStreamPtr();
         // read all data from server
         while(http.connected() && (len > 0 || len == -1)) {
           // get available data size

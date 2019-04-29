@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>ESP-Help</title>
+      <link rel="stylesheet" type="text/css" href="/global.css">
+      <style type="text/css"> div.rahmen { width:1100px; } </style>         
+   </head>
+
+   <body>
+      <div class="rahmen">
+         <h2>Modul ESP 8266 - 12F</h2>
+         <h3>Hilfe für den Umgang und die Konfiguration des Moduls</h3>
+	 <ul>
+	    <li><a href="#feature">Features</a></li>
+	    <li><a href="#erstinbetriebnahme">Erstinbetriebnahme</a></li>
+	    <li><a href="#ueberblick">Die Dateien im Überblick</a></li>
+	    <li><a href="#webserver">Der Webserver</a></li>
+	    <li><a href="#konfiguration">Konfiguration</a></li>
+	    <li><a href="#modi">Die verschiedenen Modi des Moduls</a></li>
+	    <li><a href="#sensorauswahl">Die Auswahl des verwendeten Sensors</a></li>
+	    <li><a href="#sensormodus">Die Konfiguration bei Verwendung des Sensormodus</a></li>
+	    <li><a href="#programmierung">Die Programmierung des Moduls zur Ausführung von Aktionen</a></li>
+	    <li><a href="#benutzerhandbuch">Das ausführliche Benutzerhandbuch</a></li>
+	 </ul>
+         <p><h4 id="feature">Kurzer Abriss der Features</h4>
+            <ul>
+            <li>Temperaturmessungen mit max 4 DS1820,Temp-und Feuchtemessung mit DHT22, PIR-Bewegungsmelder, Fensterüberwachung, Alarmgeber, Logging usw.</li>
+            <li>Anzeige einzeln oder mehrere Sensoren gesammelt über Webserver.</li>
+            <li>Eigenes Sensor-WLan-Netz konfigurierbar.</li>
+            <li>Hardware über 5V-Netzteil oder 2 Batterien.</li>
+            <li>Selbstbauhardware oder Verwendung von z.B. dem Wemos-mini-Modul.Link:"https://wiki.wemos.cc/products:d1:d1_mini"</li>
+            <li>Passiv ( nur Anzeige ) oder aktiv programmierbar zum Ausführen von Aktionen ( Pushservice, 2 Ausgänge schaltbar als Taster, Schalter oder Dimmen ).</li>
+            </ul>
+         </p>
+	 <p><h4 id="erstinbetriebnahme">Erstinbetriebnahme</h4>
+            Die erste Firmware muß mit einem Flash-Tool (z. B. esptool.py) geflasht werden.<br>
+            Befehl unter Linux:<br>
+            "esptool.py --port /dev/ttyUSB0 write_flash --flash_mode qio --flash_size 32m 0x00000 /home/user/wlanSensor/firmware.bin".<br>
+            Nach diesem initialen Flashen können alle weiteren Firmware-Updates oder Spiffs-Dateien (html und andere Steuerdateien) über WLan und Browser 
+            eingespielt werden.
+         </p>
+         <p><h4 id="ueberblick">Folgende Dateien müssen auf's Modul geladen werden</h4>
+            <ul>
+            <li>startPage.htm - Startseite des Modul-Webservers</li>
+            <li>sensor.htm - zeigt die gesammelten Sensordaten von anderen und wahlweise auch des eigenen Moduls an </li>
+            <li>schalter.htm - hier können die 2 Ausgänge je nach Festlegung geschaltet, getastet oder gedimmt werden</li>
+            <li>parameter.htm - hier werden die Einstellungen für den Betrieb des Moduls vorgenommen</li>
+            <li>logger.htm - bei Betrieb als Logger können hier die gesammelten Loggerdaten angezeigt werden</li>
+            <li>gpio.htm - zeigt die Zustände und Sensordaten des Moduls an</li>
+            <li>err.htm - nur zur Fehleranalyse notwendig</li>
+            <li>help.htm, help_condition_action.htm - diese Hilfe</li>
+            <li>global.css - unbedingt notwendig für eine formatierte Anzeige der Daten</li>
+            <li>ntp.txt - wenn diese Datei mit gültiger IP-Adresse als Inhalt existiert, wird die Zeit lokal von dieser Adresse (z.B. die Routeradresse) abgeholt</li>
+            <li>popup.js - Javascript für die Anzeige von einblendbaren Anzeigen mit spezieller Funktionalität</li>
+            <li>slider.js - enthält die Funktionalität zum Anzeigen von Schiebereglern auf der Schalter-Website</li>
+            <li>favico.ico - verwendet der Browser zum Anzeigen eines Icon</li>
+            <li>files.htm - Aufruf mit "Modul-IP-Adresse/files.htm". Zeigt alle Dateien im Modul an. Über den Lösch-Button können sie gelöscht werden</li>
+            </ul>
+            Beim Upload der Spiffs-Dateien erscheint ein Upload-Dialog. Hierbei sollte als erste Datei immer die "global.css"-Datei geladen werden. Danach
+            sollte die startPage.htm geladen werden.<br>
+            Drückt man einen Link-Button, ohne dass die zugehörige Datei schon geladen ist, erscheint der Upload-Dialog zum Einspielen der Datei.<br><br>
+         </p>
+         <p><h4 id="webserver">Der Webserver</h4>  
+            Den Webserver des Moduls startet man durch Eingabe seiner Netzwerkadresse, oder falls noch nicht konfiguriert, durch die Eingabe von 
+            192.168.1.4. Dabei muß sich das Modul im Accespoint-Mode befinden und das Handy oder Tablet im Wlan-Netz des Moduls eingebucht sein.<br>           
+            So gehts:<br>
+            Beim ersten Start versucht das Modul, sich in dem konfigurierten Wlan-Netz einzubuchen. Während dieser Zeit blinkt das Modul. Da noch nichts 
+            konfiguriert ist, wird nach 25 Versuchen abgebrochen und es konfiguriert sich als AccessPoint mit der Zugangsadresse "192.168.4.1". 
+            In diesem Modus leuchtet die Modul-LED ständig. Jetzt kann man sich in dieses Wlan mit Namen "ESP-AP-Free" ohne Passwort einloggen. 
+	 </p>
+	 <p><h4 id="konfiguration">Die Konfiguration des Moduls</h4>
+            Als Nächstes kann das Modul durch Klick auf den Parameter-Button konfiguriert werden:<br>
+            Die wichtigsten Eingaben sind Modulname, SSID und Passwort. Ausserdem noch Mode. ( Die Modes werden weiter unten behandelt. )<br>
+            Für Modulname verwendet man am Besten einen sprechenden Namen, der das Modul etwas beschreibt. Bsp:Wohnzimmertemperatur.<br>
+            In's Feld SSID muß der Name des Heim-Netzwerkes eingegeben werden und in's Passwortfeld entsprechend das zugehörige Passwort.
+            Nach dem Speichern der Daten mit dem Speicher-Button rebootet das Modul und loggt sich im Heimnetzwerk ein.<br>
+            Die zugewiesene IP-Adresse des Moduls kann man im Router des Heimnetzes erfahren. <br>
+            Linux-User können als root auch "nmap -sP 192.168.X.0/24" eingeben. (X durch Heimnetz-Adresse ersetzen)<br>
+            Alternativ kann das Modul auch über die serielle Schnittstelle (BAUD 115200 8N1) konfiguriert werden. Hier werden auch Debug-Ausgaben angezeigt. 
+            Unter Linux kann dafür "minicom" verwendet werden.
+            <h5>Wichtig: Die Eingabefelder dürfen nur Zahlen,Buchstaben gross und klein und den Unterstrich beinhalten!</h5>
+	 </p>
+	 <p><h4 id="modi">Die verschiedenen Modi des Moduls</h4>
+            <ul><li>"A" - AccessPoint-Modus. In diesem Modus arbeitet das Modul als AccessPoint. Es ist über die Adresse 192.168.4.1 erreichbar. Dabei 
+                    muß der Computer/Tablet/Handy sich in das Modul-Wlan einbuchen. Hier wird in der Regel die Grundkonfiguration vorgenommen.</li>
+                <li>"W" - Station-Modus. In diesem Modus ist das Modul übers Heim-Netz zu erreichen. Dabei bucht es sich mit den konfigurierten 
+                    Parametern in's Heim-Wlan ein.</li>
+                <li>"M" - Mixed-Modus. Dieser Modus ist eine Kombination aus "A" und "W". Er bietet sowohl einen Acesspoint und bucht sich zusätzlich ins 
+                    Heim-Wlan ein.</li>
+                <li>"+" - Plus kann an die oben genannten Modes angehängt werden. Dann wird zusätzlich ein UDP-Port ( Remote Port in Parameter-Website)
+                    auf eingehende Verbindungen überwacht. Andere Sensoren übermitteln über diesen Port ihre Daten, die dann auf diesem Modul 
+                    (Externe Sensoren anzeigen )angezeigt werden. Wenn auf dem Modul als Remote-Ip  die eigene Modul-IP-Adresse angegeben wird, werden 
+                    auch die eigenen Sensordaten angezeigt.</li>
+                <li>"S" - Hierbei handelt es sich um einen reinen Sensormodus. Da macht der Einsatz von Batterien Sinn, weil das Modul in bestimmten 
+                    einstellbaren Abständen ( Deep Sleep-Feld in den Parametern ) aufwacht. Dann sendet es die aktuellen Sensordaten als UDP-Datagram 
+                    an ein anderes z.B. im "W+"-Modus arbeitendes Modul. Danach geht es wieder in den stromsparenden Deep-Sleep-Modus.</li>
+                <li>"L" - In diesem Modus können Daten über einen längeren Zeitraum gespeichert werden. Wird oft zu Dokumentationszwecken verwendet.</li>
+            </ul>                                        
+          </p>
+          <p><h4 id="sensorauswahl">Die Sensorauswahl</h4>
+            Unterstützt werden zur Zeit die DS1820-Temperatursensoren und der DHT22-Feuchte-und Temperatursensor.
+            <h5>Konfiguration von Temperatur-Aliasen bei der Verwendung von DS1820-Sensoren</h5>
+                Die Sensordaten des Moduls werden von der Startseite über den Button "Eing / Ausg / Temp anzeigen" aufgerufen. Die DS1820-Sensoren z.B. 
+                melden sich da zur Identifikation mit ihrem Rom-Code. Um das ganze etwas lesbarer zu machen, kann für den Rom-Code in der Parameterseite 
+                im Feld "Aliase für Temperatursensoren" ein sprechender Name für den Sensor vergeben werden. Auf der Website für externe Sensoren werden 
+                sie dann mit diesem Namen angezeigt. ( Bsp: 282b336007000070:Modulsensor )
+	 </p>
+	 <p><h4 id="sensormodus">Die erforderlichen Einstellungen bei Verwendung des Moduls im Sensormodus</h4>
+	    Im Sensormodus arbeitende Module werden üblicherweise mit Batterien betrieben. Das ist möglich, weil die Module hier nur in einem zu definierenden 
+	    Zeitintervall die Sensordaten lesen und an eine zu definierende IP-Adresse als UDP-Datagramm senden. Danach gehen sie in einen stromsparenden 
+            Sleepmodus.<br>
+	    Es muß die Ziel-IP-Adresse im Heimnetz angegeben werden. In der Regel kann der voreingestellte Ziel-Port bei 15000 belassen werden.<br>
+	    Die Dauer der Schlafzeit (DeepSleep in den Einstellungen) wird in Sekunden angegeben und sollte 1 Stunde (3600 Sekunden) nicht überschreiten.
+	 </p>
+	 <p><h4 id="programmierung">Die Programmierung des Moduls zur Ausführung von Aktionen</h4>
+	    Das Modul kann auf Sensorwerte oder den digitalen Eingang reagieren und verschiedene Aktionen ausführen. Die Aktionen werden in Abhängigkeit von 
+	    in den Parametereinstellungen zu definierenden Bedingungen ausgeführt.
+            Die genaue Beschreibung finden sie <a href="/help_condition_action.htm">hier</a>.
+         </p>
+
+	 <p><h4 id="benutzerhandbuch">Das ausführliche Benutzerhandbuch</h4>
+	    Das Benutzerhandbuch ist noch in Arbeit.
+	 </p>
+                        
+      <p><input class="back_button" type='button' onclick="location.href='/';" value="zurück" /></p>
+
+      <div class='version'>Version R2</div>
+
+      </div>
+		
+   </body>
+</html>
+

@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>ESP-Schalter</title>
+      <link rel="stylesheet" type="text/css" href="/global.css">
+      <style type="text/css">
+
+	.sliderBg {	border-color:gray;background-color:#BBB;border: outset 3px gray; }
+	.sliderFg {	border-color:#AAF;background-color:#AAf; }
+	.sliderFgHov {	background-color:#CCF; }
+	.sliderFgAct {	background-color:#88E; }
+	.sliderBtn { font-size:6px; }
+
+	div.rahmen { width:1100px; }
+      </style>
+      <script src="/slider.js"></script>
+      <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+
+   </head>
+
+   <body>
+   <div class="rahmen">
+   <h2>Modul $MODULNAME</h2>
+   <form action='schalter.htm' method='post'>
+      $OUT1
+      $OUT2
+   </form>
+   <p><input class="back_button" type='button' onclick="location.href='/';" value="zurück" /></p>
+   <div class='version'>V R 3</div>
+   </div>
+   </body>
+</html>
+

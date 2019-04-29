@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>ESP-Parameter</title>
+      <link rel="stylesheet" type="text/css" href="/global.css">
+      <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+      <style type="text/css"> div.rahmen { width:900px; } </style>
+   </head>
+
+   <body>
+      <div class="rahmen">
+         <h2>Modul $MODULNAME</h2>
+         <form action="/parameter.htm" method="post" name="Parameter">
+            <h5>Allgemeine Modul- und WLAN-Einstellungen</h5>
+            <p><label>Modulname: </label><input type="text" id="name_id" name="name" value="$Name"></p>
+            <p><label>SSID: </label><input type="text" id="ssid_id" name="ssid" value="$Ssid"></p>
+            <p><label>Passwort: </label><input type="text" id="pw_id" name="pw" value="$Passphrase"></p>
+            <p><label>eigene statische IP: </label><input type="text" id="localip_id" name="localip" value="$Localip"></p>
+            <p><label>Gateway: </label><input type="text" id="gateway_id" name="gateway" value="$Gateway"></p>
+            <p><label>BSSID: </label><input type="text" id="bssid_id" name="bssid" value="$Bssid"></p>
+            <p><label>Mode: <select class="auswahl_mode" name="mode">$Mode</select> </label></p>
+            <label>Temperatursensor-Model <select class="auswahl_model" name="model">$tModel</select> </label>
+            <h5>Einstellungen im Sensormodus</h5>
+            <p><label>RemoteIP: </label><input type="text" id="rip_id" name="rip" value="$Rip"></p>
+            <p><label>RemotePort: </label><input type="text" id="rp_id" name="rp" value="$Rp"></p>
+            <p><label>DeepSleep: </label><input type="text" id="dsleep_id" name="dsleep" value="$Dsleep"> in sec</p>
+            <p><label>Korrekturwert VCC:</label><input type="text" id="vcc_offset_id" name="vcc_offset" value="$VCC_Offset"> in V (Bsp: -1.2 oder 0.33)</p>
+            <p>
+               <label>Aliase f&uuml;r Temperatursensoren</label><br/>
+               <input type="text" id="alias_id" name="alias" value="$Alias" size="60">
+            </p>
+            <h5>Erweiterte Moduleinstellungen fuer AccessPoint</h5>
+            <p><label>Passwort AP: </label><input type="text" id="ap_pw_id" name="ap_pw" value="$Ap_pw"> ( mind. 8 Zeichen lang !!!, oder kein PW )</p>
+            <p><label>IP-Adresse AP: </label><input type="text" id="ap_ip_id" name="ap_ip" value="$Ap_ip"></p>
+            <!-- <p><label>Gateway AP: </label><input type="text" id="ap_gw_id" name="ap_gw" value="$Ap_gw"></p> -->
+            <h5>PushingBox - Definition</h5>
+            <p>
+               <label>PushService1 - Id: </label>
+               <input type="text" id="ps1_id" name="ps1" value="$Ps1">
+               <input class="link_button" type="submit" name="ps1_button" value="PushService1 starten" >
+            </p>
+            <p>
+               <label>PushService2 - Id: </label>
+               <input type="text" id="ps2_id" name="ps2" value="$Ps2">
+               <input class="link_button" type="submit" name="ps2_button" value="PushService2 starten" >
+            </p>
+            <p><label>PushService3 - Id: </label>
+               <input type="text" id="ps3_id" name="ps3" value="$Ps3">
+               <input class="link_button" type="submit" name="ps3_button" value="PushService3 starten" >
+            </p>
+            <p><label>PushService4 - Id: </label>
+               <input type="text" id="ps4_id" name="ps4" value="$Ps4">
+               <input class="link_button" type="submit" name="ps4_button" value="PushService4 starten" >
+            </p>
+            <h5>Event - Definitionen</h5>
+            <p>
+               <label>Bedingung</label><input type="text" id="condition1_id" name="condition1" value="$Condition1">
+               <label>Aktion</label><input type="text" id="action1_id" name="action1" value="$Action1">
+            </p>
+            <p>
+               <label>Bedingung</label><input type="text" id="condition2_id" name="condition2" value="$Condition2">
+               <label>Aktion</label><input type="text" id="action2_id" name="action2" value="$Action2">
+            </p>
+            <p>
+               <label>Bedingung</label><input type="text" id="condition3_id" name="condition3" value="$Condition3">
+               <label>Aktion</label><input type="text" id="action3_id" name="action3" value="$Action3">
+            </p>
+                 <p>
+               <label>Bedingung</label><input type="text" id="condition4_id" name="condition4" value="$Condition4">
+               <label>Aktion</label><input type="text" id="action4_id" name="action4" value="$Action4">
+            </p>
+            <h5>Output - Definitionen</h5>
+            <p>
+               <label>Output 1 - Mode <select class="auswahl_model" name="output1_mode">$oMode1</select> </label>
+               <label>Output 2 - Mode <select class="auswahl_model" name="output2_mode">$oMode2</select> </label>
+            </p>
+            <p><br><input class="link_button" type="submit" name="update" value="Daten aktualisieren" ></p>
+            <p><br><input class="back_button" type='button' onclick="location.href='/';" value="zurück" /></p>
+         </form>
+         <p>$Parameter</p>
+         <div class='version'>V R 3</div>
+         </div>
+        </body>
+</html>

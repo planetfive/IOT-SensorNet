@@ -1,0 +1,2 @@
+# 1. Wert ist sensitive dann folgt offset getrennt durch Komma ohne irgendwelche Leerzeichen
+340,7718

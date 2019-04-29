@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>ESP-Start</title>
+      <link rel="stylesheet" type="text/css" href="/global.css">
+      <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+      <script src="/popup.js"></script>
+
+   </head>
+
+   <body>
+
+      <div class="rahmen">
+         <h2 > Modul $MODULNAME</h2>
+         <p>$Info</p>
+ 
+         <h3>Modul Betriebsarten</h3>
+
+                 <p><input class="link_button" type='button' onclick="location.href='/gpio.htm';" value="Eing / Ausg / Temp anzeigen" />
+
+                 <p><input class="link_button" type='button' onclick="location.href='/sensor.htm';" value="Externe Sensoren anzeigen" />
+
+                 <p><input  class="link_button" type='button' onclick="location.href='/schalter.htm';" value="Schalten / Tasten / Dimmen" />
+
+                 <p><input class="link_button" type='button' onclick="location.href='/help.htm';" value="Hilfe" />
+
+       <h3>Modul Parametrieren</h3>
+
+                 <p><input class="link_button" type='button' onclick="location.href='/parameter.htm';" value="Modul Parameter &auml;ndern" />
+
+                 <p><input class="link_button" type='button' onclick="location.href='/firmware.htm';" value="Firmware update per WLAN" />
+
+                 <p><input class="link_button" type='button' onclick="location.href='/upload';" value="SPIFFS update per WLAN" />
+
+       <h3>Entwickler Befehle</h3
+
+                 <p><input class="link_button" type='button' onclick="location.href='/err.htm';" value="Fehleranalyse" />
+
+       <h3>Aktionen</h3>
+                 <form method='POST' action='/' >
+                 <p><input class="link_button" type='submit' name='reboot' value='Modul neu booten'></p>
+                 <p><input class="link_button" type='submit' name='testbutton' value='Uhrzeit holen'></p>
+                 </form>
+
+       <!-- Trigger/Open The PopUp -->
+       <button class="link_button" id="popup_button">Werkseinstellungen setzen</button>
+
+       <!-- The PopUp -->
+       <div id="my_popup" class="modal">
+       <!-- PopUp content -->
+       <div class="modal-content">
+    	 <span class="close">&times;</span>
+    	 <p>Es werden alle Daten und alle Dateien gelöscht. Nur das Programm bleibt erhalten.<br>
+            Soll wirklich auf Werkseinstellungen zurückgesetzt werden?
+         </p>
+         <form method='POST' action='/' >
+           <p><input class="link_button" type='submit' name='erasebutton' value='Ja'></p>
+         </form>
+       </div>
+       </div> 
+       <!-- Ende The PopUp -->
+
+       <br><br>
+       <div class='version'>V R 3</div>
+       </div>
+   </body>
+</html>
